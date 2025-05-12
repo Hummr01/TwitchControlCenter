@@ -1,6 +1,7 @@
 // __tests__/follow.test.js
 const request = require('supertest');
 const app = require('../app'); // Import your Express app
+const { processedFollows } = require('../routes/api');
 
 describe('POST /api/events/follow', () => {
   const followEventPayload = {
@@ -35,7 +36,7 @@ describe('POST /api/events/follow', () => {
     // });
     // module.exports.processedFollows = processedFollows; // Export for testing
 
-    const initialFollowsLength = app.processedFollows ? app.processedFollows.length : 0;
+    const initialFollowsLength = processedFollows ? processedFollows.length : 0;
 
     await request(app)
       .post('/api/events/follow')
@@ -43,11 +44,11 @@ describe('POST /api/events/follow', () => {
       .set('Content-Type', 'application/json');
 
     // Now, check if the follow event data was processed (in our example, stored in the array)
-    expect(app.processedFollows.length).toBe(initialFollowsLength + 1);
-    expect(app.processedFollows).toContainEqual(followEventPayload);
+    expect(processedFollows.length).toBe(initialFollowsLength + 1);
+    expect(processedFollows).toContainEqual(followEventPayload);
 
     // Clean up the stored data after the test (important for isolation)
-    app.processedFollows = app.processedFollows.filter(
+    processedFollows = processedFollows.filter(
       (follow) => follow.user_id !== followEventPayload.user_id
     );
   });
